@@ -28,6 +28,7 @@ const Form = () => {
 
   const [imagePreviews, setImagePreviews] = useState([]);
 
+
   const handleChange = (e) => {
     const { name, value, type } = e.target;
 
@@ -53,6 +54,19 @@ const Form = () => {
         [name]: value,
       }));
     }
+  };
+
+  const handleDeleteImage = (index) => {
+    // Create a new array excluding the image at the specified index
+    const updatedPreviews = imagePreviews.filter((_, i) => i !== index);
+    const updatedFiles = formData.picture.filter((_, i) => i !== index);
+
+    // Update the state
+    setImagePreviews(updatedPreviews);
+    setFormData((prevState) => ({
+      ...prevState,
+      picture: updatedFiles, // Update file objects
+    }));
   };
 
   const handleSubmit = (e) => {
@@ -310,12 +324,21 @@ const Form = () => {
               <h3 className="text-lg font-semibold">Image Previews</h3>
               <div className="flex flex-wrap mt-2">
                 {imagePreviews.map((preview, index) => (
-                  <img
-                    key={index}
-                    src={preview}
-                    alt={`preview-${index}`}
-                    className="h-32 w-32 object-cover m-2 border border-gray-300 rounded"
-                  />
+                  <div key={index} className="relative m-2">
+                    <img
+                      src={preview}
+                      alt={`preview-${index}`}
+                      className="h-32 w-32 object-cover border border-gray-300 rounded"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteImage(index)}
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                      title="Delete Image"
+                    >
+                      &times; {/* This is the delete icon */}
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>

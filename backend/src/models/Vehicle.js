@@ -18,7 +18,7 @@ const vehicleSchema = new mongoose.Schema({
   timingBelt: { type: String, required: true },
   additionalInformation: { type: String, required: false },
   priceEstimation: { type: String, required: true },
-  picture: { type: String, required: true },
+  picture: { type: Array, required: true },
 
 });
 
