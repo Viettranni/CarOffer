@@ -10,11 +10,11 @@ const ThankYou = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#b4a7d6] flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-[#b4a7d6] flex flex-col items-center justify-start p-4">
       <img
         src={drivaliaLogo}
         alt="Drivalia Logo"
-        className="mx-auto mb-4 py-4"
+        className="mx-auto mb-4 mt-8"
       />
       <h1 className="text-3xl font-bold text-white mb-4">Kiitos!</h1>
       <p className="text-center text-xs text-lg text-white leading-relaxed mb-6 max-w-lg">

@@ -1,19 +1,19 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import drivaliaLogo from "../assets/drivalia-white-logo.svg"; // Assuming the logo path is correct
+import drivaliaLogo from "../assets/drivalia-white-logo.svg";
 
 const LandingPage = () => {
   const navigate = useNavigate();
 
   const handleStart = () => {
-    navigate("/form"); // This will navigate to the form page
+    navigate("/form");
   };
 
   return (
-    <div className="min-h-screen bg-[#b4a7d6] flex flex-col items-center justify-center p-4 text-white">
+    <div className="min-h-screen bg-[#b4a7d6] flex flex-col items-center justify-start p-4 text-white"> {/* Changed justify-center to justify-start */}
       {/* Logo */}
-      <img src={drivaliaLogo} alt="Drivalia Logo" className="w-48 mb-8" />
+      <img src={drivaliaLogo} alt="Drivalia Logo" className="w-48 mb-8 mt-8" /> {/* Added margin-top to the logo */}
 
       {/* Intro Text */}
       <p className="text-center text-xs text-lg leading-relaxed mb-6 max-w-lg">
