@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema(
   {
     username: { type: String, required: true },
     password: { type: String, required: true },
+    emails: { type: String, required: false}
   },
   {
     timestamps: true,
@@ -31,6 +32,7 @@ userSchema.statics.signup = async function (
   const user = await this.create({
     username,
     password: hashedPassword,
+    emails,
   });
   return user;
 };
