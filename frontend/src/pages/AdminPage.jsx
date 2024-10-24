@@ -79,7 +79,7 @@ const AdminPage = () => {
 
   const handleSaveForm = async () => {
     try {
-      await axios.put(`${baseUrl}/forms/${selectedForm._id}`, selectedForm);
+      await axios.put(`${baseUrl}/carOffer/forms/${selectedForm._id}`, selectedForm);
       setIsEditing(false);
       fetchForms();
     } catch (error) {
