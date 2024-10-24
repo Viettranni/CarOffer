@@ -32,7 +32,7 @@ const AdminPage = () => {
   const fetchReceiverEmails = async () => {
     try {
       const response = await axios.get(
-        `${baseUrl}/carOffer/forms/receiver-emails`
+        `${baseUrl}/user/getEmails`
       );
       setReceiverEmails(response.data.emails.join(", "));
     } catch (error) {
@@ -42,15 +42,23 @@ const AdminPage = () => {
 
   const saveReceiverEmails = async () => {
     try {
-      await axios.post(`${baseUrl}receiver-emails`, {
-        emails: receiverEmails.split(",").map((email) => email.trim()),
+      // Split the string by commas, trim whitespace, and join them back into a single string
+      const emailString = receiverEmails
+        .split(",")
+        .map((email) => email.trim())
+        .join(", ");
+  
+      await axios.put(`${baseUrl}/user/updateEmails`, {
+        emails: emailString, // Send emails as a string
       });
+  
       alert("Receiver emails saved successfully");
     } catch (error) {
       console.error("Error saving receiver emails:", error);
       alert("Failed to save receiver emails");
     }
   };
+  
 
   const handleFormClick = (form) => {
     setSelectedForm(form);

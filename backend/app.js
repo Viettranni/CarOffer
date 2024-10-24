@@ -12,8 +12,9 @@ const swaggerUi = require("swagger-ui-express");
 // const YAML = require("yamljs");
 // const swaggerDocument = YAML.load("./swagger/swagger.yaml");
 
-const formRoutes = require("./src/routes/formRoutes")
-// const userRoutes = require("./src/routes/userRoutes") // Not implemented yet
+// Importing Routes
+const formRoutes = require("./src/routes/formRoutes");
+const userRoutes = require("./src/routes/userRoutes");
 
 
 const path = require("path");
@@ -48,6 +49,7 @@ connectDB();
 // Routers
 // app.use("/admin", userRoutes);
 app.use("/carOffer", formRoutes);
+app.use("/user", userRoutes);
 
 
 // Example route that throws an error
