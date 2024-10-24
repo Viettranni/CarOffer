@@ -12,6 +12,8 @@ const AdminPage = () => {
   const [selectedForm, setSelectedForm] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     fetchForms();
     fetchReceiverEmails();
@@ -19,7 +21,7 @@ const AdminPage = () => {
 
   const fetchForms = async () => {
     try {
-      const response = await axios.get("/api/forms");
+      const response = await axios.get(`${baseUrl}/carOffer/forms`);
       setForms(response.data.filter((form) => !form.sent));
       setSentForms(response.data.filter((form) => form.sent));
     } catch (error) {
@@ -29,7 +31,9 @@ const AdminPage = () => {
 
   const fetchReceiverEmails = async () => {
     try {
-      const response = await axios.get("/api/receiver-emails");
+      const response = await axios.get(
+        `${baseUrl}/carOffer/forms/receiver-emails`
+      );
       setReceiverEmails(response.data.emails.join(", "));
     } catch (error) {
       console.error("Error fetching receiver emails:", error);
@@ -38,7 +42,7 @@ const AdminPage = () => {
 
   const saveReceiverEmails = async () => {
     try {
-      await axios.post("/api/receiver-emails", {
+      await axios.post(`${baseUrl}receiver-emails`, {
         emails: receiverEmails.split(",").map((email) => email.trim()),
       });
       alert("Receiver emails saved successfully");
@@ -57,9 +61,17 @@ const AdminPage = () => {
     setIsEditing(true);
   };
 
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedForm((prevForm) => ({
+      ...prevForm,
+      [name]: value,
+    }));
+  };
+
   const handleSaveForm = async () => {
     try {
-      await axios.put(`/api/forms/${selectedForm._id}`, selectedForm);
+      await axios.put(`${baseUrl}/forms/${selectedForm._id}`, selectedForm);
       setIsEditing(false);
       fetchForms();
     } catch (error) {
@@ -70,7 +82,7 @@ const AdminPage = () => {
 
   const handleSendForm = async () => {
     try {
-      await axios.post(`/api/send-form/${selectedForm._id}`);
+      await axios.post(`${baseUrl}/send-form/${selectedForm._id}`);
       alert("Form sent successfully");
       fetchForms();
     } catch (error) {
@@ -82,7 +94,7 @@ const AdminPage = () => {
   const handleDeleteForm = async () => {
     if (window.confirm("Are you sure you want to delete this form?")) {
       try {
-        await axios.delete(`/api/forms/${selectedForm._id}`);
+        await axios.delete(`${baseUrl}forms/${selectedForm._id}`);
         setSelectedForm(null);
         fetchForms();
       } catch (error) {
@@ -100,7 +112,11 @@ const AdminPage = () => {
           alt="JARI"
           className="w-32 h-32 rounded-full object-cover"
         />
-        <img src={drivalia_logo} alt="Drivalia Logo" className="w-32 h-32 object-contain" />
+        <img
+          src={drivalia_logo}
+          alt="Drivalia Logo"
+          className="w-32 h-32 object-contain"
+        />
       </div>
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex mb-6">
@@ -116,13 +132,13 @@ const AdminPage = () => {
           </button>
           <button
             className={`px-4 py-2 rounded ${
-              activeTab === "settings"
+              activeTab === "email receivers"
                 ? "bg-purple-500 text-white"
                 : "bg-gray-200"
             }`}
-            onClick={() => setActiveTab("settings")}
+            onClick={() => setActiveTab("email receivers")}
           >
-            Settings
+            Email Receivers
           </button>
         </div>
 
@@ -141,7 +157,7 @@ const AdminPage = () => {
                     }`}
                     onClick={() => handleFormClick(form)}
                   >
-                    {form.fullName} - {form.carModel}
+                    {form.fullName} - {form.registerNumber}
                   </div>
                 ))}
               </div>
@@ -155,7 +171,7 @@ const AdminPage = () => {
                     }`}
                     onClick={() => handleFormClick(form)}
                   >
-                    {form.fullName} - {form.carModel}
+                    {form.fullName} - {form.registerNumber}
                   </div>
                 ))}
               </div>
@@ -164,105 +180,104 @@ const AdminPage = () => {
               {selectedForm && (
                 <div>
                   <h2 className="text-2xl font-semibold mb-4">Form Details</h2>
-                  {isEditing ? (
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        handleSaveForm();
-                      }}
-                    >
-                      {Object.entries(selectedForm).map(
-                        ([key, value]) =>
-                          key !== "_id" &&
-                          key !== "sent" && (
-                            <div key={key} className="mb-4">
-                              <label className="block text-sm font-medium text-gray-700">
-                                {key}
-                              </label>
+                  <div className="bg-white p-4 rounded-lg shadow-md">
+                    <ul className="space-y-2">
+                      {Object.entries(selectedForm).map(([key, value]) => {
+                        if (
+                          key === "_id" ||
+                          key === "sent" ||
+                          key === "__v"
+                        )
+                          return null; // Exclude __v field
+
+                        const label = key
+                          .replace(/([A-Z])/g, " $1") // Add space before capital letters
+                          .replace(/^./, (str) => str.toUpperCase()) // Capitalize the first letter
+                          .trim(); // Trim any excess whitespace
+
+                        return (
+                          <li
+                            key={key}
+                            className="flex justify-between border-b border-gray-200 pb-2 items-center"
+                          >
+                            <span className="font-medium text-gray-700 w-1/3">
+                              {label}:
+                            </span>
+                            {!isEditing ? (
+                              <span className="text-gray-800 w-2/3">
+                                {value}
+                              </span>
+                            ) : (
                               <input
-                                type="text"
+                                className="text-gray-800 w-2/3 border border-gray-300 rounded px-2 py-1"
+                                name={key}
                                 value={value}
-                                onChange={(e) =>
-                                  setSelectedForm({
-                                    ...selectedForm,
-                                    [key]: e.target.value,
-                                  })
-                                }
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                onChange={handleFormChange}
                               />
-                            </div>
-                          )
-                      )}
-                      <button
-                        type="submit"
-                        className="bg-purple-500 text-white px-4 py-2 rounded mr-2"
-                      >
-                        Save
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setIsEditing(false)}
-                        className="bg-gray-300 px-4 py-2 rounded"
-                      >
-                        Cancel
-                      </button>
-                    </form>
-                  ) : (
-                    <div>
-                      {Object.entries(selectedForm).map(
-                        ([key, value]) =>
-                          key !== "_id" &&
-                          key !== "sent" && (
-                            <p key={key} className="mb-2">
-                              <strong>{key}:</strong> {value}
-                            </p>
-                          )
-                      )}
-                      <div className="mt-4">
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                    <div className="mt-4 flex justify-between">
+                      {!isEditing ? (
                         <button
                           onClick={handleEditForm}
                           className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
                         >
                           Edit
                         </button>
-                        {!selectedForm.sent && (
-                          <button
-                            onClick={handleSendForm}
-                            className="bg-green-500 text-white px-4 py-2 rounded mr-2"
-                          >
-                            Send to Partners
-                          </button>
-                        )}
+                      ) : (
                         <button
-                          onClick={handleDeleteForm}
-                          className="bg-red-500 text-white px-4 py-2 rounded"
+                          onClick={handleSaveForm}
+                          className="bg-green-500 text-white px-4 py-2 rounded mr-2"
                         >
-                          Delete
+                          Save
                         </button>
-                      </div>
+                      )}
+                      {!selectedForm.sent && (
+                        <button
+                          onClick={handleSendForm}
+                          className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+                        >
+                          Send to Partners
+                        </button>
+                      )}
+                      <button
+                        onClick={handleDeleteForm}
+                        className="bg-red-500 text-white px-4 py-2 rounded"
+                      >
+                        Delete
+                      </button>
                     </div>
-                  )}
+                  </div>
                 </div>
               )}
             </div>
           </div>
         )}
 
-        {activeTab === "settings" && (
+        {activeTab === "email receivers" && (
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Receiver Emails</h2>
-            <textarea
-              value={receiverEmails}
-              onChange={(e) => setReceiverEmails(e.target.value)}
-              className="w-full h-32 p-2 border rounded"
-              placeholder="Enter receiver emails separated by commas"
-            />
-            <button
-              onClick={saveReceiverEmails}
-              className="mt-4 bg-purple-500 text-white px-4 py-2 rounded"
-            >
-              Save Receiver Emails
-            </button>
+            <h2 className="text-2xl font-semibold mb-4">
+              Email Receiver Settings
+            </h2>
+            <div className="bg-white p-4 rounded-lg shadow-md">
+              <label className="block font-medium text-gray-700 mb-2">
+                Receiver Emails (comma-separated):
+              </label>
+              <textarea
+                className="w-full border border-gray-300 rounded px-3 py-2 text-gray-700"
+                value={receiverEmails}
+                onChange={(e) => setReceiverEmails(e.target.value)}
+              />
+              <button
+                onClick={saveReceiverEmails}
+                className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                Save Receiver Emails
+              </button>
+            </div>
           </div>
         )}
       </div>

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const navigate = useNavigate()
@@ -13,11 +13,11 @@ const LoginPage = () => {
     setError('')
 
     try {
-      const response = await axios.post('/api/login', { email, password })
+      const response = await axios.post('/login', { username, password })
       localStorage.setItem('token', response.data.token)
       navigate('/admin')
     } catch (error) {
-      setError('Invalid email or password')
+      setError('Invalid username or password')
       console.error('Login error:', error)
     }
   }
@@ -28,17 +28,17 @@ const LoginPage = () => {
         <h1 className="text-3xl font-bold text-center text-purple-600 mb-8">CarOffer Admin Login</h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+              Username
             </label>
             <input
-              id="email"
-              type="email"
+              id="username"
+              type="username"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
-              placeholder="Enter your email"
+              placeholder="Hulk"
             />
           </div>
           <div>
@@ -52,7 +52,7 @@ const LoginPage = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
-              placeholder="Enter your password"
+              placeholder="Green"
             />
           </div>
           {error && (

@@ -24,7 +24,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173", // Local frontend
-      "https://jobscout-frontend.onrender.com", // Deployed 
+      "https://caroffer.onrender.com/", // Deployed 
     ],
     credentials: true, // Required if sending cookies or using sessions
   })
