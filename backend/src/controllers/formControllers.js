@@ -2,6 +2,64 @@ const Form = require('../models/Form');
 const sendEmail = require('../../utils/sendEmail');
 
 // Customer side of logics
+exports.submitForm = async (req, res) => {
+  try {
+    // Access form fields
+    const { 
+      email, 
+      fullName, 
+      registerNumber, 
+      carModel, 
+      carModelEquipmentPackage, 
+      carYear, 
+      gear, 
+      milages, 
+      carsBody, 
+      carsWindscreen, 
+      summerWheels, 
+      winterWheels, 
+      maintenanceRecord, 
+      maintenanceHistory, 
+      timingBelt, 
+      additionalInformation, 
+      priceEstimation 
+    } = req.body;
+
+    // Access uploaded files
+    const pictures = req.files.map(file => file.path); // Store the file paths in the pictures array
+
+    // Create a new form entry
+    const newFormEntry = new Form({
+      email,
+      fullName,
+      registerNumber,
+      carModel,
+      carModelEquipmentPackage,
+      carYear,
+      gear,
+      milages,
+      carsBody,
+      carsWindscreen,
+      summerWheels,
+      winterWheels,
+      maintenanceRecord,
+      maintenanceHistory,
+      timingBelt,
+      additionalInformation,
+      priceEstimation,
+      picture: pictures, // Store the paths of uploaded pictures
+    });
+
+    // Save to database
+    await newFormEntry.save();
+
+    res.status(201).send({ message: 'Form submitted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: 'Internal server error' });
+  }
+};
+
 exports.createForm = async (req, res) => {
   try {
     const newForm = new Form(req.body);

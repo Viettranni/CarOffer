@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios"; // Make sure to import axios
 import drivaliaLogo from "../assets/drivalia-white-logo.svg";
+
 
 const Form = () => {
   const navigate = useNavigate();
@@ -26,15 +27,15 @@ const Form = () => {
     picture: [], // Handle multiple files
   });
 
-  const [imagePreviews, setImagePreviews] = useState([]);
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
+  const [imagePreviews, setImagePreviews] = useState([]);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
 
     if (type === "file") {
       const files = Array.from(e.target.files);
-
       const currentFiles = [...formData.picture];
 
       if (currentFiles.length + files.length > 3) {
@@ -57,11 +58,9 @@ const Form = () => {
   };
 
   const handleDeleteImage = (index) => {
-    // Create a new array excluding the image at the specified index
     const updatedPreviews = imagePreviews.filter((_, i) => i !== index);
     const updatedFiles = formData.picture.filter((_, i) => i !== index);
 
-    // Update the state
     setImagePreviews(updatedPreviews);
     setFormData((prevState) => ({
       ...prevState,
@@ -69,16 +68,40 @@ const Form = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     // Validation to limit images to 3 max
     if (formData.picture.length > 3) {
       alert("You can only upload a maximum of 3 images.");
       return;
     }
-    console.log(formData);
-    // TODO: Here you would typically send the data to your backend
-    navigate('/thank-you');
+
+    // Create a FormData object to handle the file uploads
+    const formDataToSend = new FormData();
+    for (const key in formData) {
+      if (Array.isArray(formData[key])) {
+        formData[key].forEach((file) => formDataToSend.append(key, file));
+      } else {
+        formDataToSend.append(key, formData[key]);
+      }
+    }
+
+    try {
+      // Send the form data to your backend
+      await axios.post(`${baseUrl}/carOffer/submitForm`, formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data', // Set the correct content type for file uploads
+        },
+      });
+
+      // Handle successful form submission
+      alert("Form submitted successfully!");
+      navigate('/thank-you');
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Failed to submit the form");
+    }
   };
 
   return (
@@ -243,19 +266,17 @@ const Form = () => {
             </div>
           </div>
 
-          <h2 className="text-lg font-semibold mt-6 pt-6">Maintenance</h2>
+          <h2 className="text-lg font-semibold mt-6">Maintenance</h2>
           <div>
-            <p className="mb-2">Maintenance record</p>
+            <p className="mb-2">Maintenance Record</p>
             <div className="flex flex-col space-y-2">
-              {["Perfect", "Partly", "Unknown"].map((option) => (
+              {["Perfect", "Good", "Decent", "Bad"].map((option) => (
                 <label key={option} className="inline-flex items-center">
                   <input
                     type="radio"
                     name="maintenanceRecord"
                     value={option.toLowerCase()}
-                    checked={
-                      formData.maintenanceRecord === option.toLowerCase()
-                    }
+                    checked={formData.maintenanceRecord === option.toLowerCase()}
                     onChange={handleChange}
                     className="form-radio text-black"
                   />
@@ -268,85 +289,70 @@ const Form = () => {
           <textarea
             type="text"
             name="maintenanceHistory"
-            placeholder="Example: 13.4.2024 at Drivalia"
+            placeholder="Example: 13.04.2024 at Drivalia"
             value={formData.maintenanceHistory}
             onChange={handleChange}
             className="w-full p-2 bg-gray-100 rounded"
-            required
           />
-          <p>If there is a timing belt, when was it changed?</p>
-          <textarea
+          <h2 className="text-lg font-semibold mt-6">Timing Belt</h2>
+          <input
             type="text"
             name="timingBelt"
-            placeholder="Example: Chain belt / Timing belt was changed at 60 000km last year."
+            placeholder="When was the timing belt changed?"
             value={formData.timingBelt}
             onChange={handleChange}
             className="w-full p-2 bg-gray-100 rounded"
           />
-          <h2 className="text-lg font-semibold mt-6 pt-6">
-            Additional Information
-          </h2>
+          <h2 className="text-lg font-semibold mt-6">Additional Information</h2>
           <textarea
             type="text"
             name="additionalInformation"
-            placeholder="Anything else you'd like to mention?"
+            placeholder="Additional information about the vehicle"
             value={formData.additionalInformation}
             onChange={handleChange}
             className="w-full p-2 bg-gray-100 rounded"
           />
-
-          <h2 className="text-lg font-semibold mt-6 pt-6">
-            Price Estimation (Optional)
-          </h2>
-          <textarea
+          <h2 className="text-lg font-semibold mt-6">Price Estimation</h2>
+          <input
             type="text"
             name="priceEstimation"
-            placeholder="If you have a price estimation, add it here"
+            placeholder="Estimated price"
             value={formData.priceEstimation}
             onChange={handleChange}
             className="w-full p-2 bg-gray-100 rounded"
           />
 
-          <h2 className="text-lg font-semibold mt-6 pt-6">Pictures</h2>
-          <p>You can upload a maximum of 3 pictures of the car</p>
+          <h2 className="text-lg font-semibold mt-6">Car Images</h2>
           <input
             type="file"
             name="picture"
-            onChange={handleChange}
             accept="image/*"
             multiple
-            className="mt-4"
+            onChange={handleChange}
+            className="w-full p-2 bg-gray-100 rounded"
           />
-
-          {/* Image Preview Section */}
-          {imagePreviews.length > 0 && (
-            <div className="mt-4">
-              <h3 className="text-lg font-semibold">Image Previews</h3>
-              <div className="flex flex-wrap mt-2">
-                {imagePreviews.map((preview, index) => (
-                  <div key={index} className="relative m-2">
-                    <img
-                      src={preview}
-                      alt={`preview-${index}`}
-                      className="h-32 w-32 object-cover border border-gray-300 rounded"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteImage(index)}
-                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
-                      title="Delete Image"
-                    >
-                      &times; {/* This is the delete icon */}
-                    </button>
-                  </div>
-                ))}
+          <div className="mt-4 grid grid-cols-3 gap-2">
+            {imagePreviews.map((preview, index) => (
+              <div key={index} className="relative">
+                <img
+                  src={preview}
+                  alt={`Preview ${index + 1}`}
+                  className="h-20 object-cover rounded"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleDeleteImage(index)}
+                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                >
+                  &times;
+                </button>
               </div>
-            </div>
-          )}
+            ))}
+          </div>
 
           <button
             type="submit"
-            className="w-full bg-[#7861b7] hover:bg-[#5e479a] text-white font-semibold py-2 px-4 rounded"
+            className="w-full bg-blue-600 text-white rounded p-2 hover:bg-blue-700"
           >
             Submit
           </button>

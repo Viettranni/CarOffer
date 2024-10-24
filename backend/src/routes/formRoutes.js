@@ -1,8 +1,13 @@
 const express = require('express');
-const { createForm, getAllForms, sendToPartners, saveForm } = require('../controllers/formControllers');
+const multer = require('multer');
+const { createForm, getAllForms, sendToPartners, saveForm, submitForm } = require('../controllers/formControllers');
 const router = express.Router();
 
+// Multer configuration
+const upload = multer({ dest: 'uploads/' });
+
 // Customer side of APIs
+router.post('/submitForm', upload.array('picture', 3), submitForm);
 router.post('/forms', createForm);
 router.get('/forms', getAllForms);
 
