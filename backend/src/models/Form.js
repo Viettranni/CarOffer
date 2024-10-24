@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const vehicleSchema = new mongoose.Schema({
+const formSchema = new mongoose.Schema({
   email: { type: String, required: true },
   fullName: { type: String, required: true },
   registerNumber: { type: String, required: true },
@@ -22,4 +22,4 @@ const vehicleSchema = new mongoose.Schema({
 
 });
 
-module.exports = mongoose.model("Vehicle", vehicleSchema);
+module.exports = mongoose.model("Form", formSchema);

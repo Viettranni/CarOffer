@@ -15,6 +15,10 @@ const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 const swaggerDocument = YAML.load("./swagger/swagger.yaml");
 
+const formRoutes = require("./src/routes/formRoutes")
+const userRoutes = require("./src/routes/userRoutes") // Not implemented yet
+
+
 const path = require("path");
 
 const app = express();
@@ -33,7 +37,7 @@ app.use(helmet()); // Adding Helmet for security
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // Limit each IP to 100 requests per windowMs. Currently per 15min
+  max: 10, // Limit each IP to 10 requests per windowMs. Currently per 15min
   message: "Too many requests, please try again later.",
 });
 
@@ -46,7 +50,7 @@ connectDB();
 
 // Routers
 app.use("/admin", userRoutes);
-app.use("/carOffer", vehicleRoutes);
+app.use("/carOffer", formRoutes);
 
 
 // Example route that throws an error
