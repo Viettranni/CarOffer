@@ -209,7 +209,7 @@ const Form = () => {
           <div>
             <p className="mb-2">Summer Wheels</p>
             <div className="flex flex-col space-y-2">
-              {["Good(+6mm)", "Decent(4mm-6mm)", "Bad(-4mm)"].map((option) => (
+              {["Good(+6mm)", "Decent(4mm-6mm)", "Bad(-4mm)", "No Summer Tires"].map((option) => (
                 <label key={option} className="inline-flex items-center">
                   <input
                     type="radio"
@@ -227,7 +227,7 @@ const Form = () => {
           <div>
             <p className="mb-2">Winter Wheels</p>
             <div className="flex flex-col space-y-2">
-              {["Good(+6mm)", "Decent(4mm-6mm)", "Bad(-4mm)"].map((option) => (
+              {["Good(+6mm)", "Decent(4mm-6mm)", "Bad(-4mm)", "No Winter Tires"].map((option) => (
                 <label key={option} className="inline-flex items-center">
                   <input
                     type="radio"
