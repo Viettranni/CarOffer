@@ -273,6 +273,7 @@ const AdminPage = () => {
             <div className="bg-white p-4 rounded-lg shadow-md">
               <label className="block font-medium text-gray-700 mb-2">
                 Receiver Emails (comma-separated):
+                <p className="text-xs">Example: viet.tran@drivalia.com, ironman@drivalia.com, spiderman@drivalia.com </p>
               </label>
               <textarea
                 className="w-full border border-gray-300 rounded px-3 py-2 text-gray-700"
