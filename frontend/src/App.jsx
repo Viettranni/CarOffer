@@ -5,6 +5,7 @@ import LandingPage from './pages/LandingPage';
 import AdminPage from './pages/AdminPage';
 import Form from './pages/Form';
 import ThankYou from './pages/ThankYou';
+import Login from './pages/Login';
 
 import './transitions.css';
 
@@ -24,6 +25,7 @@ const App = () => {
           <Route path="/form" element={<Form />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/thank-you" element={<ThankYou />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </CSSTransition>
     </TransitionGroup>
