@@ -5,18 +5,15 @@ const mongoose = require("mongoose");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const cors = require("cors");
-const {
-  unknownEndpoint,
-  errorHandler,
-} = require("./src/middleware/customMiddleware");
+const { unknownEndpoint, errorHandler} = require("./src/middlewares/customMiddleware.js");
 const statusMonitor = require("express-status-monitor");
 const morgan = require("morgan");
 const swaggerUi = require("swagger-ui-express");
-const YAML = require("yamljs");
-const swaggerDocument = YAML.load("./swagger/swagger.yaml");
+// const YAML = require("yamljs");
+// const swaggerDocument = YAML.load("./swagger/swagger.yaml");
 
 const formRoutes = require("./src/routes/formRoutes")
-const userRoutes = require("./src/routes/userRoutes") // Not implemented yet
+// const userRoutes = require("./src/routes/userRoutes") // Not implemented yet
 
 
 const path = require("path");
@@ -27,7 +24,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173", // Local frontend
-      "https://jobscout-frontend.onrender.com", 
+      "https://jobscout-frontend.onrender.com", // Deployed 
     ],
     credentials: true, // Required if sending cookies or using sessions
   })
@@ -49,7 +46,7 @@ app.use(morgan("dev"));
 connectDB();
 
 // Routers
-app.use("/admin", userRoutes);
+// app.use("/admin", userRoutes);
 app.use("/carOffer", formRoutes);
 
 
